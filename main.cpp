@@ -1,10 +1,10 @@
 #include "TerrainMap.h"
 #include "Path.h"
+#include "AirplanePath.cpp"
+#include "ShipPath.cpp"
 #include <vector>
 #include <iostream>
 #include <string>
-
-// Include files of your path classes will need to be added here
 
 Point read_coordinates(int argc, char *argv[], int i_option) {
     Point p;
@@ -33,8 +33,10 @@ int main(int argc, char *argv[]) {
     Point start = read_coordinates(argc,argv,2);
     Point finish = read_coordinates(argc,argv,4);
 
-    std::vector<Path*> paths = { //new YourPath(m,"MyPathName",start,finish), ...
-        // Here add the list of dynamically created classes with path finding algorithms
+    std::vector<Path*> paths = {
+        new AirplanePath(m, start, finish),
+        new ShipPath(m, start, finish),
+        // Add other path types here as needed
     };
 
     for (auto& p : paths) {
