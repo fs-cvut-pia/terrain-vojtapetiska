@@ -1,12 +1,12 @@
-class AirplanePath : public Path {
-public:
-    AirplanePath(TerrainMap& m, Point start, Point finish) : Path(m, "airplane_path", start, finish) {}
+#include "AirplanePath.h"
 
-    bool find() override {
-        // Implementace algoritmu pro nejkratší cestu mezi dvěma body pro letadla
-        // ...
+AirplanePath::AirplanePath(TerrainMap& m, Point start_in, Point finish_in)
+    : Path(m, "AirplanePath", start_in, finish_in) {}
 
-        return true; // True, pokud byla cesta nalezena, jinak false
-    }
-};
-
+bool AirplanePath::find() {
+    // Implementace algoritmu pro nalezení nejkratší cesty pro letadlo
+    // Případně můžete využít metody třídy TerrainMap pro získání výškových informací
+    // a implementovat hledání cesty podle specifikací zadání.
+    // Upravte podle potřeby.
+    return false;
+}
