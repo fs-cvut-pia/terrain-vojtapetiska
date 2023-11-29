@@ -1,3 +1,4 @@
+# NEVÍM CO DĚLÁM BLBĚ, ALE SPUSTIT MI TO NEJDE
 # Hledání cesty v terénní mapě
 
 Máte zde připravený základ kódu pro práci s terénní mapou. Ta je reprezentována maticí 256x256 celých čísel představující nadmořskou výšku v metrech (soubor *terrain.dat*).
