@@ -5,8 +5,7 @@
 #include <vector>
 #include <string>
 
-// Simple class for a 2D (x,y) coordinate vector with integer values
-
+// Struktura Point
 struct Point {
     Point() {};
     Point(int i, int j) : x(i), y(j) {};
@@ -16,15 +15,13 @@ struct Point {
     Point& operator= (double a) { x = a; y = a; return *this; };
     bool operator!= (Point const& v) const { return !(operator== (v)); };
     bool operator== (Point const& v) const { return x == v.x && y == v.y; };
-    Point operator+ (Point const& v) const { return Point(x+v.x,y+v.y); };
-    Point operator- (Point const& v) const { return Point(x-v.x,y-v.y); };
-    bool operator<  (Point const& v) const { return x + y*nx_max; }; // This is to provide a simple ordering, the operator doesn't have a geometrical meaning
+    Point operator+ (Point const& v) const { return Point(x+v.x, y+v.y); };
+    Point operator- (Point const& v) const { return Point(x-v.x, y-v.y); };
+    bool operator<  (Point const& v) const { return x + y*nx_max; }; // This is to provide a simple ordering
     double length() const { return std::sqrt(x*x + y*y); }
 };
 
-
-// Data container for matrix representation
-
+// Tøída Matrix
 template<typename T>
 class Matrix {
 public:
@@ -36,25 +33,33 @@ public:
     T& operator() (Point const& ij) { return data[ij.x+nx*ij.y]; };
     T flattened(int i) const { return data[i]; };
     T& flattened(int i) { return data[i]; };
-private:
-    int nx; int ny;
+public:
+    int nx;
+    int ny;
     std::vector<T> data;
 };
 
-// This class stores the terrain map as a matrix of altitude values
-
+// Tøída TerrainMap
 class TerrainMap {
 public:
-    TerrainMap(int n, int m);                       // Creates a zero altitude matrix with dimensions n x m
-    TerrainMap(int n, int m, std::string filename); // Creates a matrix with dimensions n x m and loads altitude data from file (by rows)
-    int alt(int x, int y);                          // Return altitude data for specific coordinates
+    TerrainMap(int n, int m);
+    TerrainMap(int n, int m, std::string filename);
+    int alt(int x, int y);
     int alt(Point const& v);
-    void outputStats();                             // Report access statistics to std. output
-    bool validCoords(Point p) const;                // Verify that the given coordinates are within bounds
-    const int nx; const int ny;
-private:
+    void outputStats();
+    bool validCoords(Point p) const;
+    const int nx;
+    const int ny;
+
+    // Veøejná metoda pro získání výškových dat
+    const Matrix<int>& getAltitude() const {
+        return altitude;
+    }
+
+public:
     Matrix<int> altitude;
     Matrix<int> access_count;
 };
 
 #endif
+

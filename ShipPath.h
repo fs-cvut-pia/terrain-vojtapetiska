@@ -1,12 +1,15 @@
-#ifndef SHIP_PATH_H
-#define SHIP_PATH_H
+// ShipPath.h
 
-#include "Path.h" // Přidáno pro dědičnost
+#ifndef SHIPPATH_H
+#define SHIPPATH_H
+
+#include "Path.h"
 
 class ShipPath : public Path {
 public:
     ShipPath(TerrainMap& m, Point start_in, Point finish_in);
-    bool find() override; // Implementace metody find pro loď
+    bool find() override;
 };
 
 #endif
+
