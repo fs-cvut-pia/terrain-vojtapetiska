@@ -46,7 +46,7 @@ bool AirplanePath::find() {
                 if (!map.validCoords(neighbor) || closed_set.count(neighbor) > 0) continue;
 
                 double cost = current.cost + 1.0;
-                double heuristic = neighbor.length();
+                double heuristic = (neighbor - finish).length();
                 open_set.push({neighbor, cost + heuristic, heuristic, new Node(current)});
             }
         }
@@ -54,3 +54,4 @@ bool AirplanePath::find() {
 
     return false;
 }
+
