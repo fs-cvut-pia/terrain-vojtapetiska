@@ -5,5 +5,7 @@ AirplanePath::AirplanePath(TerrainMap& m, Point start_in, Point finish_in)
 
 bool AirplanePath::find() {
     // Implementace algoritmu pro nalezení nejkratší cesty pro letadlo
-    return false;
+    path.push_back(start);
+    path.push_back(finish);
+    return true;
 }
