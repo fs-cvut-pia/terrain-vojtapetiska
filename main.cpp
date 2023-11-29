@@ -1,7 +1,7 @@
 #include "TerrainMap.h"
 #include "Path.h"
-#include "AirplanePath.cpp"
-#include "ShipPath.cpp"
+#include "AirplanePath.h"
+#include "ShipPath.h"
 #include <vector>
 #include <iostream>
 #include <string>
@@ -26,17 +26,16 @@ int main(int argc, char *argv[]) {
     if (argc > 1) terrain_filename = argv[1];
     else { std::cout << "No terrain file specified!" << std::endl; return 0; }
 
-    TerrainMap m(nx,ny,terrain_filename);
+    TerrainMap m(nx, ny, terrain_filename);
 
     // Load the coordinates of the start and end points
 
-    Point start = read_coordinates(argc,argv,2);
-    Point finish = read_coordinates(argc,argv,4);
+    Point start = read_coordinates(argc, argv, 2);
+    Point finish = read_coordinates(argc, argv, 4);
 
     std::vector<Path*> paths = {
         new AirplanePath(m, start, finish),
         new ShipPath(m, start, finish),
-        // Add other path types here as needed
     };
 
     for (auto& p : paths) {
@@ -51,3 +50,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
