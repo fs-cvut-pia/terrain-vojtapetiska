@@ -1,29 +1,52 @@
 #include "AirplanePath.h"
+#include <queue>
+#include <set>
 
 AirplanePath::AirplanePath(TerrainMap& m, std::string name_in, Point start_in, Point finish_in)
     : Path(m, name_in, start_in, finish_in) {}
 
 bool AirplanePath::find() {
-    // Implementace skute�n�ho algoritmu pro nalezen� cesty letadlem
-    // Tato implementace je pouze ilustrativn�, mus�te ji nahradit skute�n�m algoritmem
+    // Implementace hledání cesty pro letadlo (Dijkstrův algoritmus)
+    std::priority_queue<std::pair<int, Point>, std::vector<std::pair<int, Point>>, std::greater<>> pq;
+    std::set<Point> visited;
 
-    int dx = finish.x - start.x;
-    int dy = finish.y - start.y;
+    pq.push({0, start});
 
-    if (std::abs(dx) > std::abs(dy)) {
-        int step = (dx > 0) ? 1 : -1;
-        for (int x = start.x; x != finish.x; x += step) {
-            path.push_back({x, start.y});
+    while (!pq.empty()) {
+        auto [cost, current] = pq.top();
+        pq.pop();
+
+        if (visited.count(current) > 0) {
+            continue;
         }
-    } else {
-        int step = (dy > 0) ? 1 : -1;
-        for (int y = start.y; y != finish.y; y += step) {
-            path.push_back({start.x, y});
+
+        path.push_back(current);
+        visited.insert(current);
+
+        if (current == finish) {
+            break;
+        }
+
+        // Získání možných sousedních bodů
+        std::vector<Point> neighbors = {
+            {current.x + 1, current.y},
+            {current.x - 1, current.y},
+            {current.x, current.y + 1},
+            {current.x, current.y - 1}
+        };
+
+        for (const auto& neighbor : neighbors) {
+            if (map.validCoords(neighbor)) {
+                int altitude = map.alt(neighbor);
+                int newCost = cost + 1;  // Předpokládáme, že každý krok má stejnou cenu
+
+                // Pokud je výška na následujícím poli nižší, přidáme ho do fronty
+                if (altitude < map.alt(current)) {
+                    pq.push({newCost, neighbor});
+                }
+            }
         }
     }
-
-    // P�id�n� koncov�ho bodu
-    path.push_back(finish);
 
     return true;
 }

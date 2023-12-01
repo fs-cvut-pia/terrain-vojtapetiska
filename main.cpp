@@ -1,5 +1,3 @@
-// main.cpp
-
 #include "TerrainMap.h"
 #include "Path.h"
 #include "AirplanePath.h"
@@ -7,43 +5,21 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <fstream>  // P�id�no pro pr�ci se soubory
+#include <fstream>
 
-Point read_coordinates(int argc, char *argv[], int i_option) {
+Point read_coordinates(const std::string& filename, int i_option) {
     Point p;
-
-    if (argc > i_option + 1) {
-        p.x = std::atoi(argv[i_option]);
-        p.y = std::atoi(argv[i_option + 1]);
-    } else {
-        throw std::runtime_error("Chyba: Nespr�vn� specifikovan� sou�adnice!");
-    }
-
-    return p;
-}
-
-TerrainMap load_terrain_map(const std::string &filename, int nx, int ny) {
-    TerrainMap m(nx, ny);
 
     std::ifstream input_file(filename);
 
-    if (!input_file) {
-        throw std::runtime_error("Chyba: Nelze otev��t soubor " + filename);
+    if (!input_file) throw std::runtime_error("Cannot open file " + filename);
+
+    // Načítání dat ze souboru
+    if (!(input_file >> p.x >> p.y)) {
+        throw std::runtime_error("Error reading coordinates from file " + filename);
     }
 
-    int a;
-    int i = 0;
-
-    while (input_file >> a) {
-        m.altitude.flattened(i) = a;
-        i++;
-    }
-
-    if (i != nx * ny) {
-        throw std::runtime_error("Chyba: Nevhodn� form�t vstupn�ch dat");
-    }
-
-    return m;
+    return p;
 }
 
 int main(int argc, char *argv[]) {
@@ -52,26 +28,25 @@ int main(int argc, char *argv[]) {
 
     std::string terrain_filename;
 
-    // Load the terrain map
-
+    // Načítání souboru s terénní mapou ze vstupních parametrů
     if (argc > 1) terrain_filename = argv[1];
     else { std::cout << "No terrain file specified!" << std::endl; return 0; }
 
     TerrainMap m(nx, ny, terrain_filename);
 
-    // Load the coordinates of the start and end points
+    // Načítání počátečního a koncového bodu ze souboru
+    Point start = read_coordinates(terrain_filename, 2);
+    Point finish = read_coordinates(terrain_filename, 4);
 
-    Point start = read_coordinates(argc, argv, 2);
-    Point finish = read_coordinates(argc, argv, 4);
-
-    // Create and initialize Path instances
-    std::vector<Path *> paths = {
+    // Vytvoření instancí cest a provedení hledání
+    std::vector<Path*> paths = {
         new AirplanePath(m, "AirplanePath", start, finish),
         new ShipPath(m, "ShipPath", start, finish),
+        // Případně další třídy můžete přidat podle potřeby
     };
 
-    // For each path, perform the search, print statistics, and save to file
-    for (auto &p : paths) {
+    // Zpracování cest
+    for (auto& p : paths) {
         std::cout << "Path search: " << p->getName() << std::endl;
         std::cout << "=============" << std::endl;
         p->find();
@@ -83,5 +58,6 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
 
 
