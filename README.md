@@ -1,4 +1,3 @@
-přestalo mi z nějakého důvodu fungovat linuxové prostředí codeblocks, takže nedokážu říct jestli upravené skripty dělají to co mají
 # Hledání cesty v terénní mapě
 
 Máte zde připravený základ kódu pro práci s terénní mapou. Ta je reprezentována maticí 256x256 celých čísel představující nadmořskou výšku v metrech (soubor *terrain.dat*).
