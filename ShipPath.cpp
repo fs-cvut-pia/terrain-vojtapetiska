@@ -1,16 +1,43 @@
+// ShipPath.cpp
 #include "ShipPath.h"
+#include <queue>
+#include <set>
+#include <cmath>
+#include <algorithm>
 
 ShipPath::ShipPath(TerrainMap& m, std::string name_in, Point start_in, Point finish_in)
     : Path(m, name_in, start_in, finish_in) {}
 
 bool ShipPath::find() {
-    // Implementace hledání cesty pro loï
-    Point current = start;
+    // Implementace hledÃ¡nÃ­ cesty pro loÄ (podmÃ­nky pro nadmoÅ™skou vÃ½Å¡ku < 0)
+    std::priority_queue<std::pair<double, Point>, std::vector<std::pair<double, Point>>, std::greater<>> pq;
+    std::set<Point> visited;
+    Matrix<Point> prev(map.nx, map.ny);
 
-    while (current != finish) {
-        path.push_back(current);
+    auto heuristic = [this](const Point& a, const Point& b) {
+        // JednoduchÃ¡ heuristika - EukleidovskÃ¡ vzdÃ¡lenost
+        return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.y - b.y, 2));
+    };
 
-        // Získání monıch sousedních bodù
+    pq.push({heuristic(start, finish), start});
+    visited.insert(start);
+
+    while (!pq.empty()) {
+        auto [cost, current] = pq.top();
+        pq.pop();
+
+        if (current == finish) {
+            // Pokud jsme dosÃ¡hli cÃ­le, rekonstruujeme cestu
+            while (current != start) {
+                path.push_back(current);
+                current = prev(current);
+            }
+            path.push_back(start);
+            std::reverse(path.begin(), path.end());
+
+            return true;
+        }
+
         std::vector<Point> neighbors = {
             {current.x + 1, current.y},
             {current.x - 1, current.y},
@@ -18,30 +45,18 @@ bool ShipPath::find() {
             {current.x, current.y - 1}
         };
 
-        Point next;
-        int minAltitude = std::numeric_limits<int>::max();
-
         for (const auto& neighbor : neighbors) {
-            if (map.validCoords(neighbor)) {
-                int altitude = map.alt(neighbor);
-                if (altitude < minAltitude) {
-                    minAltitude = altitude;
-                    next = neighbor;
-                }
+            if (map.validCoords(neighbor) && map.alt(neighbor) < 0 && visited.count(neighbor) == 0) {
+                pq.push({cost + heuristic(neighbor, finish), neighbor});
+                visited.insert(neighbor);
+                prev(neighbor) = current;
             }
         }
-
-        // Pokud vıška na následujícím poli je nezáporná, skonèíme hledání
-        if (minAltitude >= 0) {
-            break;
-        }
-
-        current = next;
     }
 
-    // Pøidání cílového bodu do cesty
-    path.push_back(finish);
-
-    return true;
+    // Pokud dojde k tomu, Å¾e priority queue je prÃ¡zdnÃ¡ a cÃ­l nenÃ­ dosaÅ¾en, vrÃ¡tÃ­me false
+    return false;
 }
+
+
 

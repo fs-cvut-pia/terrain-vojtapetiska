@@ -5,18 +5,15 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <fstream>
 
-Point read_coordinates(const std::string& filename, int i_option) {
+Point read_coordinates(int argc, char *argv[], int i_option) {
     Point p;
 
-    std::ifstream input_file(filename);
-
-    if (!input_file) throw std::runtime_error("Cannot open file " + filename);
-
-    // Načítání dat ze souboru
-    if (!(input_file >> p.x >> p.y)) {
-        throw std::runtime_error("Error reading coordinates from file " + filename);
+    if (argc > i_option + 1) {
+        p.x = std::atoi(argv[i_option]);
+        p.y = std::atoi(argv[i_option + 1]);
+    } else {
+        throw std::runtime_error("Coordinates incorrectly specified!");
     }
 
     return p;
@@ -28,24 +25,28 @@ int main(int argc, char *argv[]) {
 
     std::string terrain_filename;
 
-    // Načítání souboru s terénní mapou ze vstupních parametrů
-    if (argc > 1) terrain_filename = argv[1];
-    else { std::cout << "No terrain file specified!" << std::endl; return 0; }
+    // Load the terrain map
+
+    if (argc > 1) {
+        terrain_filename = argv[1];
+    } else {
+        std::cout << "No terrain file specified!" << std::endl;
+        return 0;
+    }
 
     TerrainMap m(nx, ny, terrain_filename);
 
-    // Načítání počátečního a koncového bodu ze souboru
-    Point start = read_coordinates(terrain_filename, 2);
-    Point finish = read_coordinates(terrain_filename, 4);
+    // Load the coordinates of the start and end points
 
-    // Vytvoření instancí cest a provedení hledání
+    Point start = read_coordinates(argc, argv, 2);
+    Point finish = read_coordinates(argc, argv, 4);
+
     std::vector<Path*> paths = {
         new AirplanePath(m, "AirplanePath", start, finish),
-        new ShipPath(m, "ShipPath", start, finish),
-        // Případně další třídy můžete přidat podle potřeby
+        new ShipPath(m, "ShipPath", start, finish)
+        // Zde můžete přidat instance dalších tříd pro různé typy cest
     };
 
-    // Zpracování cest
     for (auto& p : paths) {
         std::cout << "Path search: " << p->getName() << std::endl;
         std::cout << "=============" << std::endl;
@@ -58,6 +59,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
 
 
 
