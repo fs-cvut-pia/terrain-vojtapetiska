@@ -3,7 +3,6 @@
 #include <queue>
 #include <set>
 #include <cmath>
-#include <algorithm>
 
 ShipPath::ShipPath(TerrainMap& m, std::string name_in, Point start_in, Point finish_in)
     : Path(m, name_in, start_in, finish_in) {}
@@ -38,15 +37,16 @@ bool ShipPath::find() {
             return true;
         }
 
-        std::vector<Point> neighbors = {
-            {current.x + 1, current.y},
-            {current.x - 1, current.y},
-            {current.x, current.y + 1},
-            {current.x, current.y - 1}
+        // Definice možných směrů
+        std::vector<Point> directions = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+            {1, 1}, {-1, 1}, {1, -1}, {-1, -1}
         };
 
-        for (const auto& neighbor : neighbors) {
-            if (map.validCoords(neighbor) && map.alt(neighbor) < 0 && visited.count(neighbor) == 0) {
+        for (const auto& direction : directions) {
+            Point neighbor = current + direction;
+
+            if (map.validCoords(neighbor) && (map.alt(neighbor) < 0 || neighbor == finish) && visited.count(neighbor) == 0) {
                 pq.push({cost + heuristic(neighbor, finish), neighbor});
                 visited.insert(neighbor);
                 prev(neighbor) = current;
