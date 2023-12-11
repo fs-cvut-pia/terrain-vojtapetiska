@@ -3,6 +3,7 @@
 #include <queue>
 #include <set>
 #include <cmath>
+#include <algorithm>
 
 ShipPath::ShipPath(TerrainMap& m, std::string name_in, Point start_in, Point finish_in)
     : Path(m, name_in, start_in, finish_in) {}
