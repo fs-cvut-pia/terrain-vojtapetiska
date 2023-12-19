@@ -1,16 +1,20 @@
 #include "TerrainMap.h"
 #include "Path.h"
+#include "AirplanePath.h"
+#include "ShipPath.h"
 #include <vector>
 #include <iostream>
 #include <string>
 
-// Include files of your path classes will need to be added here
-
 Point read_coordinates(int argc, char *argv[], int i_option) {
     Point p;
 
-    if (argc > i_option+1) { p.x = std::atoi(argv[i_option]); p.y = std::atoi(argv[i_option + 1]); }
-    else throw std::runtime_error("Coordinates incorrectly specified!");
+    if (argc > i_option + 1) {
+        p.x = std::atoi(argv[i_option]);
+        p.y = std::atoi(argv[i_option + 1]);
+    } else {
+        throw std::runtime_error("Coordinates incorrectly specified!");
+    }
 
     return p;
 }
@@ -23,18 +27,24 @@ int main(int argc, char *argv[]) {
 
     // Load the terrain map
 
-    if (argc > 1) terrain_filename = argv[1];
-    else { std::cout << "No terrain file specified!" << std::endl; return 0; }
+    if (argc > 1) {
+        terrain_filename = argv[1];
+    } else {
+        std::cout << "No terrain file specified!" << std::endl;
+        return 0;
+    }
 
-    TerrainMap m(nx,ny,terrain_filename);
+    TerrainMap m(nx, ny, terrain_filename);
 
     // Load the coordinates of the start and end points
 
-    Point start = read_coordinates(argc,argv,2);
-    Point finish = read_coordinates(argc,argv,4);
+    Point start = read_coordinates(argc, argv, 2);
+    Point finish = read_coordinates(argc, argv, 4);
 
-    std::vector<Path*> paths = { //new YourPath(m,"MyPathName",start,finish), ...
-        // Here add the list of dynamically created classes with path finding algorithms
+    std::vector<Path*> paths = {
+        new AirplanePath(m, "AirplanePath", start, finish),
+        new ShipPath(m, "ShipPath", start, finish)
+        // Zde můžete přidat instance dalších tříd pro různé typy cest
     };
 
     for (auto& p : paths) {
@@ -49,3 +59,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+
+
+
